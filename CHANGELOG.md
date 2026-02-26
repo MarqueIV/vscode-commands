@@ -1,3 +1,7 @@
+## 1.21.0 `26 Feb 2026`
+
+- 🐛 Fix Security Vulnerability: Remote Code Execution (RCE) via Status Bar Variable Substitution [Issue#75](https://github.com/usernamehw/vscode-commands/issues/75)
+
 ## 1.20.0 `20 Jan 2026`
 
 - ✨ Show Tree View item based on active Text Editor:
