@@ -1,4 +1,4 @@
-import { MarkdownString, StatusBarAlignment, ThemeColor, languages, window, type StatusBarItem, type TextEditor } from 'vscode';
+import { MarkdownString, StatusBarAlignment, ThemeColor, window, type StatusBarItem, type TextEditor } from 'vscode';
 import { CommandId } from './commands';
 import { createFolderHoverText } from './folderHoverText';
 import { substituteVariables } from './substituteVariables';
@@ -17,6 +17,7 @@ type StatusBarWithActiveEditorMetadata = StatusBarItem & {
 	activeEditorLanguage?: string;
 	inputs?: Inputs;
 	replaceVariableValue?: StatusBar['replaceVariableValue'];
+	workspace?: string;
 };
 
 export interface StatusBarUpdateEvents {
@@ -126,6 +127,7 @@ export function updateStatusBarItems(items: TopLevelCommands, variableSubstituti
 		newStatusBarItem.activeEditorLanguage = item.statusBar.activeEditorLanguage || item.activeEditorLanguage;
 		newStatusBarItem.inputs = extUtils.isCommandFolder(item) ? undefined : item.inputs;
 		newStatusBarItem.replaceVariableValue = item.statusBar.replaceVariableValue;
+		newStatusBarItem.workspace = item.workspace;
 
 		newStatusBarItem.show();
 		statusBarItems.push(newStatusBarItem);
@@ -189,6 +191,10 @@ export async function updateStatusBarTextFromEvents(variableSubstitutionEnabled:
 			continue;
 		}
 		if (statusBarItem.originalText === undefined) {
+			continue;
+		}
+		if (statusBarItem.workspace) {
+			window.showWarningMessage(`Variable Substitution is disabled for workspace status bar items. https://github.com/usernamehw/vscode-commands/issues/75`);
 			continue;
 		}
 		const substituted = await substituteVariables({
